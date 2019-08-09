@@ -1,0 +1,36 @@
+<idea-plugin>
+    <id>csense-idea.java-assistance</id>
+    <name>Csense - java assistance</name>
+    <vendor email="csense@tvedesys.dk" url="https://github.com/csense-oss/idea-java-assistant">
+        Csense oss
+    </vendor>
+
+    <description><![CDATA[
+     A plugin that helps you avoid common issues with Java & various JVM bugs & unforeseen issues.
+     Examples include:
+        - mismatched parameter names (you use the wrong place for the given argument)
+
+    ]]></description>
+
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <inspectionToolProvider
+                implementation="csense.idea.java.assistance.inspections.InspectionsProvider"/>
+    </extensions>
+
+    <project-components>
+        <component>
+            <implementation-class>
+                csense.idea.java.assistance.notification.MainNotificationComponent
+            </implementation-class>
+        </component>
+    </project-components>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+
+    <idea-version since-build="182"/>
+</idea-plugin>
