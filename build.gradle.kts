@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "csense-idea"
-version = "0.1"
+version = "0.2"
 
 intellij {
     updateSinceUntilBuild = false //Disables updating since-build attribute in plugin.xml
@@ -24,7 +24,12 @@ dependencies {
 
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
-        First version :)   
+        <ul>
+            <li>initialization order (with 1 level of indirection)</li>
+            <li>Added move declaration quick fix to the initialization order inspection</li>
+            <li>Initial work on Inheritance based initialization</li>
+            <li>Suppression available</li>
+        </ul>
       """)
 }
 

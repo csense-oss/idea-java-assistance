@@ -5,9 +5,10 @@ import com.intellij.codeInspection.*
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.*
 import csense.idea.java.assistance.Constants
-import csense.kotlin.*
+import csense.idea.java.assistance.suppression.*
+import csense.idea.java.assistance.visitors.*
 
-class NamedArgsPositionMismatch : AbstractBaseJavaLocalInspectionTool() {
+class NamedArgsPositionMismatch : LocalInspectionTool(), CustomSuppressableInspectionTool {
 
     override fun getDisplayName(): String {
         return "Mismatched naming for parameter names"
@@ -40,6 +41,12 @@ class NamedArgsPositionMismatch : AbstractBaseJavaLocalInspectionTool() {
 
     override fun getDefaultLevel(): HighlightDisplayLevel {
         return HighlightDisplayLevel.ERROR
+    }
+
+
+    override fun getSuppressActions(element: PsiElement?): Array<SuppressIntentionAction>? {
+        return arrayOf(
+                PsiExpressionSuppression("Suppress naming mismatch issue", groupDisplayName, shortName))
     }
 
     override fun buildVisitor(holder: ProblemsHolder,
@@ -120,16 +127,6 @@ class NamedArgsPositionMismatch : AbstractBaseJavaLocalInspectionTool() {
 
 }
 
-
-class PsiCallExpressionVisitor(
-        val block: Function0<PsiCallExpression>
-) : PsiElementVisitor() {
-    override fun visitElement(element: PsiElement?) {
-        if (element is PsiCallExpression) {
-            block(element)
-        }
-    }
-}
 
 data class MismatchedName(val name: String, val parameterIndex: Int, val shouldBeAtIndex: Int)
 

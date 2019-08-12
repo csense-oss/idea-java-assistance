@@ -7,9 +7,12 @@
 
     <description><![CDATA[
      A plugin that helps you avoid common issues with Java & various JVM bugs & unforeseen issues.
-     Examples include:
-        - mismatched parameter names (you use the wrong place for the given argument)
-
+     Examples include:<br/>
+     <ul>
+        <li> mismatched parameter names (you use the wrong place for the given argument)</li>
+        <li> inheritance based issues (with regards to initialization)</li>
+        <li> initialization order inspection</li>
+      </ul>
     ]]></description>
 
     <depends>com.intellij.modules.lang</depends>
