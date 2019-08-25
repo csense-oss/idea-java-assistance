@@ -1,1 +1,1 @@
-rootProject.name = "java-assistance"
+rootProject.name = "csense-idea-java-assistance"

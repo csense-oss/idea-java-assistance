@@ -1,12 +1,12 @@
 plugins {
     id("org.jetbrains.intellij") version "0.4.10"
-    kotlin("jvm") version "1.3.41"
+    kotlin("jvm") version "1.3.50"
     java
     id("org.owasp.dependencycheck") version "5.1.0"
 }
 
 group = "csense-idea"
-version = "0.2"
+version = "0.3"
 
 intellij {
     updateSinceUntilBuild = false //Disables updating since-build attribute in plugin.xml
@@ -16,19 +16,18 @@ intellij {
 
 repositories {
     jcenter()
+    //until ds is in jcenter
+    maven(url = "https://dl.bintray.com/csense-oss/csense-kotlin")
 }
 
 dependencies {
-    compile("csense.kotlin:csense-kotlin-jvm:0.0.20")
+    compile("csense.kotlin:csense-kotlin-jvm:0.0.21")
+    compile("csense.kotlin:csense-kotlin-ds-jvm:0.0.21")
 }
-
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
         <ul>
-            <li>initialization order (with 1 level of indirection)</li>
-            <li>Added move declaration quick fix to the initialization order inspection</li>
-            <li>Initial work on Inheritance based initialization</li>
-            <li>Suppression available</li>
+            <li></li>
         </ul>
       """)
 }
