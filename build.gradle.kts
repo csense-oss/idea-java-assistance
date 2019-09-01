@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "csense-idea"
-version = "0.3"
+version = "0.4"
 
 intellij {
     updateSinceUntilBuild = false //Disables updating since-build attribute in plugin.xml
@@ -27,7 +27,8 @@ dependencies {
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
         <ul>
-            <li></li>
+            <li>Fixed issue with mismatched names where some parameters did not have a name (eg "a, 42, b")</li>
+            <li>Fixed issues with values from other classes ect. </li>
         </ul>
       """)
 }

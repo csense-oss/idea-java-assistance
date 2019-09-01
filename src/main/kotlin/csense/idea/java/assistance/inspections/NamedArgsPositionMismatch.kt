@@ -132,7 +132,7 @@ data class MismatchedName(val name: String, val parameterIndex: Int, val shouldB
 
 
 fun PsiCallExpression.findInvocationArgumentNames(): List<String?> {
-    return argumentList?.expressions?.mapNotNull {
+    return argumentList?.expressions?.map {
         if (it is PsiReferenceExpression) {
             it.referenceName
         } else {

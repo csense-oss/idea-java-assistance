@@ -7,6 +7,7 @@ import csense.idea.java.assistance.*
 import csense.idea.java.assistance.quickfixes.*
 import csense.idea.java.assistance.suppression.*
 import csense.idea.java.assistance.visitors.*
+import org.jetbrains.kotlin.asJava.*
 
 
 class InitializationOrder : LocalInspectionTool(), CustomSuppressableInspectionTool {
@@ -80,11 +81,16 @@ class InitializationOrder : LocalInspectionTool(), CustomSuppressableInspectionT
 
     fun createErrorDescription(invalidOrders: List<DangerousReference>): String {
 
-        val haveInnerInvalid = invalidOrders.joinToString(",") {
-            it.innerReferences.joinToString(",\"", "\"", "\"") { exp -> exp.referenceName ?: "" }
-        }
+        val allInvalid = invalidOrders.map {
+            it.innerReferences
+        }.flatten().map { it.referenceName }.distinct()
+
+
+        val haveInnerInvalid =
+                allInvalid.joinToString(",\"")
+
         val innerMessage = if (haveInnerInvalid.isNotBlank()) {
-            "\n(Indirect dangerous references = $haveInnerInvalid)\n"
+            "\n(Indirect dangerous references = \"$haveInnerInvalid\")\n"
         } else {
             ""
         }
@@ -138,7 +144,8 @@ fun PsiField.findLocalReferencesForInitializer(
         //skip things that are "ok" / legit.
         nameRef.isPotentialDangerousReference(
                 ourFqNameStart,
-                nonDelegatesQuickLookup)
+                nonDelegatesQuickLookup,
+                this.name)
     }?.map {
         DangerousReference(it,
                 resolveInnerDangerousReferences(
@@ -151,14 +158,25 @@ fun PsiField.findLocalReferencesForInitializer(
 
 private fun PsiReferenceExpression.isPotentialDangerousReference(
         ourFqNameStart: String,
-        nonDelegatesQuickLookup: Set<String>
+        nonDelegatesQuickLookup: Set<String>,
+        fromName: String?
 ): Boolean {
     val referre = this.resolve() ?: return false
+    val referreClass = referre as? PsiNamedElement
+    val refName = referreClass?.name ?: return false
+    val refFqName = referre.fqName() ?: return false
 
-    val name = referenceName ?: return false
-    val fqName = fqName() ?: return false
-    val isInOurClass = fqName.startsWith(ourFqNameStart) &&
-            nonDelegatesQuickLookup.contains(name)
+    if (refName == fromName && refFqName.startsWith(ourFqNameStart)) {
+        return false //self reference: either the compiler will fail (field initialized to itself) or its a field with the same name as a parameter..
+    }
+
+    val isInOurClass = refFqName.startsWith(ourFqNameStart) &&
+            nonDelegatesQuickLookup.contains(referenceName)
+
+    if (!isInOurClass) {
+        return false
+    }
+
     return when (referre) {
         is PsiMethod -> {
             return resolveInnerDangerousReferences(
@@ -169,7 +187,7 @@ private fun PsiReferenceExpression.isPotentialDangerousReference(
         is PsiField -> {
             return true //we are referencing another field, that is by definition dangerous.
         }
-        else -> isInOurClass
+        else -> true
     }
 }
 
